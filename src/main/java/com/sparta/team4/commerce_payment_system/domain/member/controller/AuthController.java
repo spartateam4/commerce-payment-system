@@ -1,5 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.member.controller;
 
+import com.sparta.team4.commerce_payment_system.domain.member.dto.LoginRequest;
+import com.sparta.team4.commerce_payment_system.domain.member.dto.LoginResponse;
 import com.sparta.team4.commerce_payment_system.domain.member.dto.SignupRequest;
 import com.sparta.team4.commerce_payment_system.domain.member.dto.SignupResponse;
 import com.sparta.team4.commerce_payment_system.domain.member.service.AuthService;
@@ -24,5 +26,11 @@ public class AuthController {
             @Valid @RequestBody SignupRequest request) {
         SignupResponse response = authService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);   // 200 OK
     }
 }
