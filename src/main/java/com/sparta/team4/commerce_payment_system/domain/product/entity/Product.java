@@ -1,5 +1,6 @@
 package com.sparta.team4.commerce_payment_system.domain.product.entity;
 
+import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
