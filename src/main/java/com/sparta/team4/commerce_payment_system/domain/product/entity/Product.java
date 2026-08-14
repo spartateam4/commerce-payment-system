@@ -1,0 +1,36 @@
+package com.sparta.team4.commerce_payment_system.domain.product.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Getter
+@NoArgsConstructor
+@Table(name = "products")
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private String category;
+
+    private int totalPrice;
+
+    private int stock;
+
+    private String description;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+}
