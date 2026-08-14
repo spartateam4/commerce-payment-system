@@ -8,13 +8,11 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "products")
-public class Product {
+public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +27,4 @@ public class Product {
     private int stock;
 
     private String description;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }
