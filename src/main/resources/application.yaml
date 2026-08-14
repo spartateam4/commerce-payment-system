@@ -5,8 +5,8 @@ spring:
   datasource:
 
     url: ${DB_URL:jdbc:mysql://localhost:3306/commerce}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:1234}
+    username: root
+    password: 12345678
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
