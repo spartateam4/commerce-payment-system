@@ -1,0 +1,64 @@
+package com.sparta.team4.commerce_payment_system.global.exception;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+public enum ErrorCode {
+
+
+    // ===== 공통 =====
+    // 400 — 검증 실패, 필수값 누락
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "요청 값이 올바르지 않습니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
+
+    // ====== 회원 =====
+    // 401 — 로그인 실패 / 인증 실패
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
+
+    // 404 — 회원 없음
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
+
+    // 409 — 이메일 중복
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다.");
+
+
+
+    // ===== 상품 ===== (상품 담당자가 추가)
+
+
+
+
+
+
+
+
+    // ===== 주문 ===== (주문 담당자가 추가)
+
+
+
+
+
+
+
+
+    // ===== 결제 ===== (결제 담당자가 추가)
+
+
+
+
+
+
+
+
+
+    // ======= 필요한 생성자
+    private final HttpStatus status;
+    private final String message;
+
+    ErrorCode(HttpStatus status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+}
