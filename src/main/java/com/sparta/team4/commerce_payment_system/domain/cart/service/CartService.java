@@ -1,7 +1,6 @@
 package com.sparta.team4.commerce_payment_system.domain.cart.service;
 
 import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
-import com.sparta.team4.commerce_payment_system.domain.cart.repository.CartItemRepository;
 import com.sparta.team4.commerce_payment_system.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ public class CartService {
 
     @Transactional
     public Long addItem(CartItem cartItem) {
-
     }
 
 
