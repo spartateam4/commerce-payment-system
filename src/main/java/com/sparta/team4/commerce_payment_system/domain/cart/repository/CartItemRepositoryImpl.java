@@ -3,7 +3,7 @@ package com.sparta.team4.commerce_payment_system.domain.cart.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.team4.commerce_payment_system.domain.cart.Cart;
 import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
-import com.sparta.team4.commerce_payment_system.domain.product.Product;
+import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 

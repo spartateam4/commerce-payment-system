@@ -8,7 +8,7 @@ import com.sparta.team4.commerce_payment_system.domain.cart.repository.CartItemR
 import com.sparta.team4.commerce_payment_system.domain.cart.repository.CartRepository;
 import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
 import com.sparta.team4.commerce_payment_system.domain.member.repository.MemberRepository;
-import com.sparta.team4.commerce_payment_system.domain.product.Product;
+import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import com.sparta.team4.commerce_payment_system.domain.product.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -65,7 +65,7 @@ public class CartService {
 
         // 기존 장바구니 항목 확인
         Optional<CartItem> existing = cartItemRepository
-                .findByCart_IdAndProduct_Id(cart.getId(), productId);
+                .findByCartIdAndProductId(cart.getId(), productId);
 
         // 기존 항목이 있으면 수량 추가, 없으면 새로 생성
         CartItem saved;
@@ -131,7 +131,7 @@ public class CartService {
     // 전체 비우기
     @Transactional
     public void deleteAllCartItems(Long memberId) {
-        List<CartItem> items = cartItemRepository.findByCart_MemberId(memberId);
+        List<CartItem> items = cartItemRepository.findByCartMemberId(memberId);
         cartItemRepository.deleteAll(items);
     }
 

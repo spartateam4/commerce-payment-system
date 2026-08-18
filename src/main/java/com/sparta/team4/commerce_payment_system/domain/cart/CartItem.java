@@ -1,6 +1,6 @@
 package com.sparta.team4.commerce_payment_system.domain.cart;
 
-import com.sparta.team4.commerce_payment_system.domain.product.Product;
+import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
