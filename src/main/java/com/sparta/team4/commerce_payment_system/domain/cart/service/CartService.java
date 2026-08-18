@@ -69,6 +69,11 @@ public class CartService {
 
         // 기존 항목이 있으면 수량 추가, 없으면 새로 생성
         CartItem saved;
+
+        if (quantity <= 0) {
+            throw new RuntimeException("수량은 1 이상이어야 합니다");
+        }
+
         if (existing.isPresent()) {
             int totalQuantity = existing.get().getQuantity() + quantity;
 
@@ -100,6 +105,10 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
 
         // quantity가 상품 재고를 초과하면 예외
+        if (quantity <= 0) {
+            throw new RuntimeException("수량은 1 이상이어야 합니다");
+        }
+
         if (quantity > item.getProduct().getStock()) {
             throw new RuntimeException("재고가 부족합니다");
         }
