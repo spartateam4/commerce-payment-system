@@ -8,12 +8,8 @@ import lombok.NoArgsConstructor;
 public class ProductCreateRequest {
 
     private String name;
-
     private String category;
-
     private int totalPrice;
-
     private int stock;
-
     private String description;
 }

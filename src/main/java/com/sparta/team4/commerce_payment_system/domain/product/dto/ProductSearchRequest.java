@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 public class ProductSearchRequest {
 
     private String category;
-
     private Integer minPrice;
-
     private Integer maxPrice;
 }

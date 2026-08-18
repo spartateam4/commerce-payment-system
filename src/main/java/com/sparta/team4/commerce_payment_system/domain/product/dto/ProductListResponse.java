@@ -1,5 +1,6 @@
 package com.sparta.team4.commerce_payment_system.domain.product.dto;
 
+import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import lombok.Getter;
 
 import java.util.List;
