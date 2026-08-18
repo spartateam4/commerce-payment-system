@@ -1,4 +1,4 @@
-package com.sparta.team4.commerce_payment_system.domain.order;
+package com.sparta.team4.commerce_payment_system.domain.order.entity;
 
 public enum OrderStatus {
     PAYMENT_PENDING, // 결제 대기
