@@ -1,6 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.order.dto;
 
 import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
+import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderItem;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderStatus;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -35,9 +36,10 @@ public class OrderDetailResponse {
         private Integer orderPrice;
         private Integer quantity;
 
-        public OrderItemResponse(com.sparta.team4.commerce_payment_system.domain.order.entity.OrderItem item) {
+        public OrderItemResponse(OrderItem item) {
             this.id = item.getId();
-            this.productId = item.getProduct().getId();
+            // product 연동 후 주석 삭제
+            // this.productId = item.getProduct().getId();
             this.productName = item.getProductName();
             this.orderPrice = item.getOrderPrice();
             this.quantity = item.getQuantity();

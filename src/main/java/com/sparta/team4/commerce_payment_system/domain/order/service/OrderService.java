@@ -10,8 +10,10 @@ import com.sparta.team4.commerce_payment_system.domain.order.repository.OrderRep
 import com.sparta.team4.commerce_payment_system.domain.payment.Payment;
 // import com.sparta.team4.commerce_payment_system.domain.payment.PaymentRepository;
 // import com.sparta.team4.commerce_payment_system.domain.payment.PaymentStatus;
-import com.sparta.team4.commerce_payment_system.domain.product.Product;
+
+// import com.sparta.team4.commerce_payment_system.domain.product.Product;
 // import com.sparta.team4.commerce_payment_system.domain.product.ProductRepository;
+
 import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
 import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +56,7 @@ public class OrderService {
 
             // TODO: 준호님 ProductRepository 연동 시 주석 지우기
 
-            /*
+        /*
             Product product = productRepository.findById(itemReq.getProductId())
                     .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
@@ -73,7 +75,8 @@ public class OrderService {
 
             orderItems.add(orderItem);
             totalAmount += (product.getTotalPrice() * itemReq.getQuantity());
-            */
+        */
+
         }
 
         Order order = Order.builder()
@@ -154,12 +157,19 @@ public class OrderService {
 
         // TODO: 준호님 재고 복구, 예림님 결제 상태 업데이트 연동 후 주석 해제 하고 사용
 
-        /*
+        // 준호님 상품 (재고 복구 로직)
+
+    /*
         for (OrderItem orderItem : order.getOrderItems()) {
             Product product = orderItem.getProduct();
             product.addStock(orderItem.getQuantity());
         }
 
+    */
+
+        // 예림님 결제 (결제 복구 로직)
+
+        /*
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
         payment.updateStatus(PaymentStatus.FAILED);

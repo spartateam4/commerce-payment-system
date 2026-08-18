@@ -1,6 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.order.entity;
 
-import com.sparta.team4.commerce_payment_system.domain.product.Product;
+// product 연동 후 주석 삭제
+// import com.sparta.team4.commerce_payment_system.domain.product.Product;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,10 +23,12 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+/*  product 연동 후 주석 삭제
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-
+*/
     @Column(name = "product_name", nullable = false, length = 200)
     private String productName;
     @Column(name = "order_price", nullable = false)
@@ -33,7 +36,7 @@ public class OrderItem extends BaseEntity {
 
     @Column(nullable = false)
     private Integer quantity;
-
+/*
     @Builder
     public OrderItem(Product product, String productName, Integer orderPrice, Integer quantity) {
         this.product = product;
@@ -41,6 +44,7 @@ public class OrderItem extends BaseEntity {
         this.orderPrice = orderPrice;
         this.quantity = quantity;
     }
+*/
 
     public void assignOrder(Order order) {
         this.order = order;
