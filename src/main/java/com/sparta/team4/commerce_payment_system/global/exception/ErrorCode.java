@@ -20,7 +20,7 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
 
     // 409 — 이메일 중복
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다.");
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
 
 
 
@@ -35,6 +35,13 @@ public enum ErrorCode {
 
     // ===== 주문 ===== (주문 담당자가 추가)
 
+    OUT_OF_STOCK(HttpStatus.CONFLICT, "상품의 재고가 부족합니다."),
+
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문 내역을 찾을 수 없습니다."),
+
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 주문에 접근할 권한이 없습니다."),
+
+    CANCEL_NOT_ALLOWED(HttpStatus.CONFLICT, "이미 결제가 완료되었거나 취소된 주문은 처리할 수 없습니다.");
 
 
 
