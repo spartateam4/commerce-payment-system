@@ -1,14 +1,18 @@
 package com.sparta.team4.commerce_payment_system.domain.payment.entity;
 
-import com.sparta.team4.commerce_payment_system.domain.order.Order;
+import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,17 +21,16 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @Entity
-//@Table(name = "payments")
+@Table(name = "payments")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO Order가 아직 JPA 엔티티가 아님
-    //@OneToOne(fetch = FetchType.LAZY, optional = false)
-    //@JoinColumn(name = "order_id", nullable = false, unique = true)
-    //private Order order;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
+    private Order order;
 
     @Column(nullable = false)
     private Integer amount;
@@ -37,29 +40,25 @@ public class Payment extends BaseEntity {
     private PaymentStatus status;
 
     @LastModifiedDate
-    //@Column(name = "paid_at")
+    @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
     public Payment(Order order, Integer amount) {
-        //this.order = order;
+        this.order = order;
         this.amount = amount;
-        status = PaymentStatus.PENDING; // 일단 "결제대기" 상태로 생성
+        this.status = PaymentStatus.PENDING; // 일단 "결제대기" 상태로 생성
     }
 
     public void complete() {
-        changeStatus(PaymentStatus.COMPLETED);
+        this.status = PaymentStatus.COMPLETED;
         this.paidAt = LocalDateTime.now();
     }
 
     public void fail() {
-        changeStatus(PaymentStatus.FAILED);
+        this.status = PaymentStatus.FAILED;
     }
 
     public void cancel() {
-        changeStatus(PaymentStatus.CANCELLED);
-    }
-
-    private void changeStatus(PaymentStatus target) {
-        if (!status.canTransitTo(target)) throw new RuntimeException();
+        this.status = PaymentStatus.CANCELLED;
     }
 }
