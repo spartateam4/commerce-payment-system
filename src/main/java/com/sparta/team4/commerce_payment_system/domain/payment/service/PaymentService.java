@@ -1,5 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.payment.service;
 
+import com.sparta.team4.commerce_payment_system.domain.payment.dto.GetPaymentResponse;
+import com.sparta.team4.commerce_payment_system.domain.payment.entity.Payment;
 import com.sparta.team4.commerce_payment_system.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,4 +52,11 @@ public class PaymentService {
 //
 //        return PaymentResponse.from(savePayment);
 //    }
+
+    @Transactional(readOnly = true)
+    public GetPaymentResponse getPayment(Long id) {
+        Payment payment = paymentRepository.findById(id).orElseThrow();
+
+        return GetPaymentResponse.from(payment);
+    }
 }
