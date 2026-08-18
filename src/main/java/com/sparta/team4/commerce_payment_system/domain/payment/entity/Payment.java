@@ -24,7 +24,7 @@ public class Payment extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Order가 아직 JPA 엔티티가 아님
+    // TODO Order가 아직 JPA 엔티티가 아님
     //@OneToOne(fetch = FetchType.LAZY, optional = false)
     //@JoinColumn(name = "order_id", nullable = false, unique = true)
     //private Order order;
@@ -37,13 +37,29 @@ public class Payment extends BaseEntity {
     private PaymentStatus status;
 
     @LastModifiedDate
-    //@Column(nullable = false, name = "paid_at")
+    //@Column(name = "paid_at")
     private LocalDateTime paidAt;
 
     public Payment(Order order, Integer amount) {
         //this.order = order;
         this.amount = amount;
-        status = PaymentStatus.COMPLETED;
-        paidAt = LocalDateTime.now();
+        status = PaymentStatus.PENDING; // 일단 "결제대기" 상태로 생성
+    }
+
+    public void complete() {
+        changeStatus(PaymentStatus.COMPLETED);
+        this.paidAt = LocalDateTime.now();
+    }
+
+    public void fail() {
+        changeStatus(PaymentStatus.FAILED);
+    }
+
+    public void cancel() {
+        changeStatus(PaymentStatus.CANCELLED);
+    }
+
+    private void changeStatus(PaymentStatus target) {
+        if (!status.canTransitTo(target)) throw new RuntimeException();
     }
 }
