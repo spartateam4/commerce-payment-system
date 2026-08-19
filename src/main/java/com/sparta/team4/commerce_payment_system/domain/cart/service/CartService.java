@@ -10,6 +10,8 @@ import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
 import com.sparta.team4.commerce_payment_system.domain.member.repository.MemberRepository;
 import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import com.sparta.team4.commerce_payment_system.domain.product.repository.ProductRepository;
+import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
+import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,9 +53,14 @@ public class CartService {
     @Transactional
     public CartItemResponse addItem(Long memberId, Long productId, int quantity) {
 
+        // 수량 검증 (가장 먼저 체크)
+        if (quantity <= 0) {
+            throw new CustomException(ErrorCode.INVALID_QUANTITY);
+        }
+
         // memberId로 회원 조회
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // memberId로 장바구니 조회, 없으면 생성
         Cart cart = cartRepository.findByMemberId(memberId)
@@ -61,32 +68,29 @@ public class CartService {
 
         // productId로 상품 조회
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // 기존 장바구니 항목 확인
         Optional<CartItem> existing = cartItemRepository
                 .findByCartIdAndProductId(cart.getId(), productId);
 
-        // 기존 항목이 있으면 수량 추가, 없으면 새로 생성
         CartItem saved;
 
-        if (quantity <= 0) {
-            throw new RuntimeException("수량은 1 이상이어야 합니다");
-        }
-
         if (existing.isPresent()) {
+            // 기존 항목이 있으면 수량 추가
             int totalQuantity = existing.get().getQuantity() + quantity;
 
-            if (totalQuantity > product.getStock()) {
-                throw new RuntimeException("재고가 부족합니다");
+            if (totalQuantity > product.getStockQuantity()) {
+                throw new CustomException(ErrorCode.OUT_OF_STOCK);
             }
 
             existing.get().addQuantity(quantity);
             saved = existing.get();
-            // save() 없어도 변경 감지로 DB 반영됨!
+
         } else {
-            if (quantity > product.getStock()) {
-                throw new RuntimeException("재고가 부족합니다");
+            // 새로운 항목 생성
+            if (quantity > product.getStockQuantity()) {
+                throw new CustomException(ErrorCode.OUT_OF_STOCK);
             }
 
             CartItem newItem = new CartItem(cart, product, quantity);
@@ -100,17 +104,19 @@ public class CartService {
     // 수량 변경
     @Transactional
     public CartItemResponse updateCartItem(Long memberId, Long itemId, int quantity) {
-        CartItem item = cartItemRepository.findById(itemId)
-                .filter(ci -> ci.getCart().getMember().getId().equals(memberId))
-                .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
 
-        // quantity가 상품 재고를 초과하면 예외
+        // 수량 검증 (가장 먼저 체크)
         if (quantity <= 0) {
-            throw new RuntimeException("수량은 1 이상이어야 합니다");
+            throw new CustomException(ErrorCode.INVALID_QUANTITY);
         }
 
-        if (quantity > item.getProduct().getStock()) {
-            throw new RuntimeException("재고가 부족합니다");
+        CartItem item = cartItemRepository.findById(itemId)
+                .filter(ci -> ci.getCart().getMember().getId().equals(memberId))
+                .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+        // 상품 재고 확인
+        if (quantity > item.getProduct().getStockQuantity()) {
+            throw new CustomException(ErrorCode.OUT_OF_STOCK);
         }
 
         item.changeQuantity(quantity);
@@ -123,7 +129,8 @@ public class CartService {
     public void deleteCartItem(Long memberId, Long itemId) {
         CartItem item = cartItemRepository.findById(itemId)
                 .filter(ci -> ci.getCart().getMember().getId().equals(memberId))
-                .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
         cartItemRepository.delete(item);
     }
 
@@ -134,6 +141,7 @@ public class CartService {
         List<CartItem> items = cartItemRepository.findByCartMemberId(memberId);
         cartItemRepository.deleteAll(items);
     }
+
 
     // 응답 변환
     private CartItemResponse toResponse(CartItem item) {
