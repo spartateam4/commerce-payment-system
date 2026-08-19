@@ -24,14 +24,11 @@ public enum ErrorCode {
 
 
 
-    // ===== 상품 ===== (상품 담당자가 추가)
-
-
-
-
-
-
-
+    // ===== 상품 =====
+    // 400 — 상품 검색 조건 오류
+    INVALID_PRODUCT_SEARCH(HttpStatus.BAD_REQUEST, "상품 검색 조건이 올바르지 않습니다."),
+    // 404 — 상품 없음
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 
     // ===== 주문 ===== (주문 담당자가 추가)
 
