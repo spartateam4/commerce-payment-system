@@ -86,7 +86,7 @@ public class PaymentService {
         if (!requestedByMemberId.equals(targetPayment.getOrder().getMember().getId()))
             throw new CustomException(ErrorCode.ACCESS_DENIED); // 403
 
-        // 결제 상태가 "대기"가 아님
+        // 결제 상태가 "완료"가 아님
         if (targetPayment.getStatus() != PaymentStatus.COMPLETED)
             throw new CustomException(ErrorCode.INVALID_PAYMENT_STATUS); // 409
 
