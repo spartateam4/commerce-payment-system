@@ -23,25 +23,19 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     @Override
     public Page<Product> searchProducts(
-            String category,
-            Integer minPrice,
-            Integer maxPrice,
-            Pageable pageable
-    ) {
-        QProduct product = QProduct.product;
+            String category, Integer minPrice, Integer maxPrice, Pageable pageable) {
 
+        QProduct product = QProduct.product;
         BooleanBuilder condition = new BooleanBuilder();
 
         if (category != null && !category.isBlank()) {
             condition.and(product.category.eq(category));
         }
-
         if (minPrice != null) {
-            condition.and(product.totalPrice.goe(minPrice));
+            condition.and(product.price.goe(minPrice));   // totalPrice → price
         }
-
         if (maxPrice != null) {
-            condition.and(product.totalPrice.loe(maxPrice));
+            condition.and(product.price.loe(maxPrice));   // totalPrice → price
         }
 
         List<Product> products = queryFactory
@@ -58,10 +52,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .where(condition)
                 .fetchOne();
 
-        return new PageImpl<>(
-                products,
-                pageable,
-                total != null ? total : 0L
-        );
+        return new PageImpl<>(products, pageable, total != null ? total : 0L);
     }
 }
