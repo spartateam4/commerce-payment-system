@@ -38,11 +38,14 @@ public enum ErrorCode {
 
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 주문에 접근할 권한이 없습니다."),
 
-    CANCEL_NOT_ALLOWED(HttpStatus.CONFLICT, "이미 결제가 완료되었거나 취소된 주문은 처리할 수 없습니다.");
+    CANCEL_NOT_ALLOWED(HttpStatus.CONFLICT, "이미 결제가 완료되었거나 취소된 주문은 처리할 수 없습니다."),
 
 
 
+    // ===== 장바구니 =====
+    INVALID_QUANTITY(HttpStatus.BAD_REQUEST, "수량은 1 이상이어야 합니다."),
 
+    CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니 항목을 찾을 수 없습니다.");
 
 
 
