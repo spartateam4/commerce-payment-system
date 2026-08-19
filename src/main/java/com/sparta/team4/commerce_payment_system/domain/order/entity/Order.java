@@ -2,6 +2,8 @@ package com.sparta.team4.commerce_payment_system.domain.order.entity;
 
 import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
+import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
+import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,10 +42,14 @@ public class Order extends BaseEntity {
 
     @Builder
     public Order(Member member, String orderNumber, Integer totalAmount, OrderStatus status) {
+        if (totalAmount < 0) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST);
+        }
         this.member = member;
         this.orderNumber = orderNumber;
         this.totalAmount = totalAmount;
-        this.status = status;
+        // 초기 상태 (null로 들어올 경우)
+        this.status = status != null ? status : OrderStatus.PAYMENT_PENDING;
     }
 
     public void addOrderItem(OrderItem orderItem) {
@@ -52,10 +58,19 @@ public class Order extends BaseEntity {
     }
 
     public void cancelOrder() {
-        this.status = OrderStatus.CANCELLED;
+        changeStatus(OrderStatus.CANCELLED);
     }
 
     public void completeOrder() {
-        this.status = OrderStatus.COMPLETED;
+        changeStatus(OrderStatus.COMPLETED);
+    }
+
+    // 상태 전이 규칙
+    private void changeStatus(OrderStatus newStatus) {
+        if (!this.status.canTransitTo(newStatus)) {
+            // 추후 ErrorCode에 INVALID_ORDER_STATUS 추가
+            throw new CustomException(ErrorCode.INVALID_REQUEST);
+        }
+        this.status = newStatus;
     }
 }
