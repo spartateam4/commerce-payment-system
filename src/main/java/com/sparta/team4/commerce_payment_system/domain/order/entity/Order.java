@@ -30,7 +30,7 @@ public class Order extends BaseEntity {
     @Column(name = "order_number", unique = true, nullable = false, length = 20)
     private String orderNumber;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount", nullable = false, columnDefinition = "int UNSIGNED")
     private Integer totalAmount;
 
     @Enumerated(EnumType.STRING)

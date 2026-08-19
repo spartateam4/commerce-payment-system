@@ -32,10 +32,10 @@ public class OrderItem extends BaseEntity {
     @Column(name = "product_name", nullable = false, length = 200)
     private String productName;
 
-    @Column(name = "order_price", nullable = false)
+    @Column(name = "order_price", nullable = false, columnDefinition = "int UNSIGNED")
     private Integer orderPrice;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "int UNSIGNED")
     private Integer quantity;
 
     @Builder
