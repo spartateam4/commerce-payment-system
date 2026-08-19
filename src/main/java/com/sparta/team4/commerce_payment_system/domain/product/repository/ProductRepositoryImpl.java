@@ -32,10 +32,10 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
             condition.and(product.category.eq(category));
         }
         if (minPrice != null) {
-            condition.and(product.price.goe(minPrice));   // totalPrice → price
+            condition.and(product.price.goe(minPrice));
         }
         if (maxPrice != null) {
-            condition.and(product.price.loe(maxPrice));   // totalPrice → price
+            condition.and(product.price.loe(maxPrice));
         }
 
         List<Product> products = queryFactory

@@ -18,22 +18,14 @@ public class ProductController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice,
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,     // ← 1에서 0으로 (0-based)
             @RequestParam(defaultValue = "20") int size
     ) {
-        return productService.getProducts(
-                category,
-                minPrice,
-                maxPrice,
-                page,
-                size
-        );
+        return productService.getProducts(category, minPrice, maxPrice, page, size);
     }
 
     @GetMapping("/{productId}")
-    public ProductResponse getProduct(
-            @PathVariable Long productId
-    ) {
+    public ProductResponse getProduct(@PathVariable Long productId) {
         return productService.getProduct(productId);
     }
 }
