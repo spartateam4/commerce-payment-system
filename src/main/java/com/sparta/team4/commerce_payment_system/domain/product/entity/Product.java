@@ -29,15 +29,17 @@ public class Product extends BaseEntity {
 
     private String description;
 
-    public Product(String name, String category, int totalPrice, int stock, String description) {
+    public Product(
+            String name,
+            String category,
+            int totalPrice,
+            int stock,
+            String description
+    ) {
         this.name = name;
         this.category = category;
         this.totalPrice = totalPrice;
         this.stock = stock;
         this.description = description;
-    }
-
-    public int getPrice() {
-        return this.totalPrice;  // Product의 필드명이 totalPrice이므로
     }
 }

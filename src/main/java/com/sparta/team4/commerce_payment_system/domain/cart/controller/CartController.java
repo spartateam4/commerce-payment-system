@@ -22,10 +22,10 @@ public class CartController {
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @Valid @RequestBody AddCartRequest request) {
 
-        Long memberId = principal.getMemberId();
+        // Long memberId = principal.getMemberId();
 
         CartItemResponse response = cartService.addItem(
-                memberId,
+                principal.getMemberId(),
                 request.productId(),
                 request.quantity()
         );
@@ -37,8 +37,8 @@ public class CartController {
     public ResponseEntity<CartResponse> getCart(
             @AuthenticationPrincipal CustomUserPrincipal principal) {
 
-        Long memberId = principal.getMemberId();
-        CartResponse response = cartService.getCart(memberId);
+        // Long memberId = principal.getMemberId();
+        CartResponse response = cartService.getCart(principal.getMemberId());
 
         return ResponseEntity.ok(response);
     }
@@ -50,9 +50,9 @@ public class CartController {
             @PathVariable Long cartItemId,
             @Valid @RequestBody UpdateCartRequest request) {
 
-        Long memberId = principal.getMemberId();
+        // Long memberId = principal.getMemberId();
         CartItemResponse response = cartService.updateCartItem(
-                memberId,
+                principal.getMemberId(),
                 cartItemId,
                 request.quantity()
         );
@@ -65,8 +65,8 @@ public class CartController {
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @PathVariable Long cartItemId) {
 
-        Long memberId = principal.getMemberId();
-        cartService.deleteCartItem(memberId, cartItemId);
+        // Long memberId = principal.getMemberId();
+        cartService.deleteCartItem(principal.getMemberId(), cartItemId);
 
         return ResponseEntity.noContent().build();
     }
@@ -76,8 +76,8 @@ public class CartController {
     public ResponseEntity<Void> deleteAllCartItems(
             @AuthenticationPrincipal CustomUserPrincipal principal) {
 
-        Long memberId = principal.getMemberId();
-        cartService.deleteAllCartItems(memberId);
+        // Long memberId = principal.getMemberId();
+        cartService.deleteAllCartItems(principal.getMemberId());
 
         return ResponseEntity.noContent().build();
     }

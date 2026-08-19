@@ -5,18 +5,21 @@ import com.sparta.team4.commerce_payment_system.domain.cart.Cart;
 import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
 import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 import static com.sparta.team4.commerce_payment_system.domain.cart.QCartItem.cartItem; // QClass import 필요
 
+@Repository
 @RequiredArgsConstructor
 public class CartItemRepositoryImpl implements CartItemRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory; // QueryDSL 전용 도구 주입
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public Optional<CartItem> findByCartAndProduct(Cart cart, Product product) {
-        // 💡 힌트: queryFactory.selectFrom(cartItem).where(...).fetchOne();
         CartItem result = queryFactory
                 .selectFrom(cartItem)
                 .where(
@@ -28,15 +31,22 @@ public class CartItemRepositoryImpl implements CartItemRepositoryCustom {
     }
 
     @Override
-    public Optional<CartItem> findByIdAndCart_MemberId(Long cartItemId, Long memberId) {
-        // 💡 힌트: queryFactory를 활용해 id와 memberId 조건 걸기
+    public Optional<CartItem> findByCartIdAndProductId(Long cartId, Long productId) {
         CartItem result = queryFactory
                 .selectFrom(cartItem)
                 .where(
-                        cartItem.id.eq(cartItemId),
-                        cartItem.cart.member.id.eq(memberId)
+                        cartItem.cart.id.eq(cartId),
+                        cartItem.product.id.eq(productId)
                 )
                 .fetchOne();
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public List<CartItem> findByCartMemberId(Long memberId) {
+        return queryFactory
+                .selectFrom(cartItem)
+                .where(cartItem.cart.member.id.eq(memberId))
+                .fetch();
     }
 }
