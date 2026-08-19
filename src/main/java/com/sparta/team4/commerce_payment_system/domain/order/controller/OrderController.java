@@ -1,6 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.order.controller;
 
 import com.sparta.team4.commerce_payment_system.domain.order.dto.*;
+import com.sparta.team4.commerce_payment_system.domain.order.facade.OrderFacade;
 import com.sparta.team4.commerce_payment_system.domain.order.service.OrderService;
 import com.sparta.team4.commerce_payment_system.global.security.CustomUserPrincipal;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderFacade orderFacade;
 
     // 1. 신규 주문 생성
     @PostMapping
@@ -26,8 +28,8 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserPrincipal userPrincipal,
             @Valid @RequestBody OrderCreateRequest request
     ) {
-        // 토큰에서 추출한 실제 회원 ID를 서비스로 넘겨준다
-        OrderCreateResponse response = orderService.createOrder(userPrincipal.getMemberId(), request);
+        // 복합 트랜잭션 -> Facade 호출
+        OrderCreateResponse response = orderFacade.createOrder(userPrincipal.getMemberId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -37,6 +39,7 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserPrincipal userPrincipal,
             @PageableDefault(size = 10) Pageable pageable
     ) {
+        // 단일 조회 로직 -> Service 직접 호출
         Page<OrderCreateResponse> response = orderService.getMyOrders(userPrincipal.getMemberId(), pageable);
         return ResponseEntity.ok(response);
     }
@@ -47,18 +50,20 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserPrincipal userPrincipal,
             @PathVariable("id") Long orderId
     ) {
+        // 단일 조회 로직 -> Service 직접 호출
         OrderDetailResponse response = orderService.getOrderDetail(userPrincipal.getMemberId(), orderId);
         return ResponseEntity.ok(response);
     }
 
     // 4. 결제 전 주문 취소
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/cancel")
     public ResponseEntity<OrderCancelResponse> cancelOrder(
             @AuthenticationPrincipal CustomUserPrincipal userPrincipal,
             @PathVariable("id") Long orderId,
             @Valid @RequestBody OrderCancelRequest request
     ) {
-        OrderCancelResponse response = orderService.cancelOrder(userPrincipal.getMemberId(), orderId, request);
+        // 복합 트랜잭션 -> Facade 호출
+        OrderCancelResponse response = orderFacade.cancelOrder(userPrincipal.getMemberId(), orderId, request);
         return ResponseEntity.ok(response);
     }
 }
