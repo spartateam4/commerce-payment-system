@@ -38,7 +38,7 @@ public enum ErrorCode {
 
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 주문에 접근할 권한이 없습니다."),
 
-    CANCEL_NOT_ALLOWED(HttpStatus.CONFLICT, "이미 결제가 완료되었거나 취소된 주문은 처리할 수 없습니다."),
+    CANCEL_NOT_ALLOWED(HttpStatus.CONFLICT, "이미 결제가 완료되었거나 취소된 주문은 처리할 수 없습니다.");
 
 
 
