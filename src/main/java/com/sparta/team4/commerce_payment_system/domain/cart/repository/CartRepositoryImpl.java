@@ -16,7 +16,6 @@ public class CartRepositoryImpl implements CartRepositoryCustom {
 
     @Override
     public Optional<Cart> findByMemberId(Long memberId) {
-        // TODO: QueryDSL로 구현
         Cart result = queryFactory
                 .selectFrom(cart)
                 .where(

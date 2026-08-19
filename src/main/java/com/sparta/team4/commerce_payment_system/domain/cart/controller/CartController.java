@@ -22,6 +22,15 @@ public class CartController {
             @AuthenticationPrincipal CustomUserPrincipal principal,
             @Valid @RequestBody AddCartRequest request) {
 
+        System.out.println(" principal 확인: " + principal);
+
+        if (principal == null) {
+            System.out.println("⚠️ principal이 null입니다!");
+            return ResponseEntity.status(401).body(null);
+        }
+
+        System.out.println(" memberId: " + principal.getMemberId());
+
         // Long memberId = principal.getMemberId();
 
         CartItemResponse response = cartService.addItem(

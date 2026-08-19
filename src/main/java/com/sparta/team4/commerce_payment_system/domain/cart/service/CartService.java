@@ -83,7 +83,7 @@ public class CartService {
 
             existing.get().addQuantity(quantity);
             saved = existing.get();
-            // ✅ save() 없어도 변경 감지로 DB 반영됨!
+            // save() 없어도 변경 감지로 DB 반영됨!
         } else {
             if (quantity > product.getStock()) {
                 throw new RuntimeException("재고가 부족합니다");
