@@ -26,7 +26,9 @@ public class OrderFacade {
     private final OrderService orderService;
     private final MemberRepository memberRepository;
 
-    // TODO: 준호님, 예림님 기능 서비스 추가  (주석 지우고 사용)
+    // TODO: 윤지님(장바구니), 준호님(상품), 예림님(결제) 기능 서비스 추가 (주석 지우고 사용)
+
+    // private final CartService cartService;
     // private final ProductService productService;
     // private final PaymentService paymentService;
 
@@ -39,40 +41,52 @@ public class OrderFacade {
         int totalAmount = 0;
         List<OrderItem> orderItems = new ArrayList<>();
 
-        // 2. 상품 조회 및 재고 선차감, OrderItem 구성
-        for (OrderCreateRequest.OrderItemRequest itemReq : request.getOrderItems()) {
+        // TODO: 윤지님(장바구니) + 준호님(상품) 연동 시 주석 해제 및 수정
 
-            // TODO: 준호님 Product 연동 시 주석 해제 및 수정
+        /*
+        // 2. 장바구니 아이템 조회 (요청이 비어있으면 전체 장바구니 조회)
+        List<Long> cartItemIds = (request.getCartItemIds() != null) ? request.getCartItemIds() : List.of();
+        List<CartItem> cartItems = cartItemIds.isEmpty()
+                ? cartService.findCartEntities(memberId)
+                : cartService.findCartEntitiesByIds(memberId, cartItemIds);
 
-            /*
-            Product product = productService.findProductEntity(itemReq.getProductId());
+        if (cartItems.isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST); // 추후 CART_EMPTY 에러코드로 변경
+        }
 
-            if (product.getStock() < itemReq.getQuantity()) {
+        // 3. 재고 선차감 및 OrderItem 스냅샷 구성
+        for (CartItem cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+
+            if (product.getStock() < cartItem.getQuantity()) {
                 throw new CustomException(ErrorCode.OUT_OF_STOCK);
             }
-            product.removeStock(itemReq.getQuantity());
+            product.removeStock(cartItem.getQuantity());
 
             OrderItem orderItem = OrderItem.builder()
                     // .product(product)
                     .productName(product.getName())
-                    .orderPrice(product.getTotalPrice())
-                    .quantity(itemReq.getQuantity())
+                    .orderPrice(product.getPrice()) // 현재가(price)를 스냅샷으로 저장
+                    .quantity(cartItem.getQuantity())
                     .build();
 
             orderItems.add(orderItem);
-            totalAmount += orderItem.getSubtotal(); // OrderItem 내부 메서드 사용
-            */
+            totalAmount += orderItem.getSubtotal(); // 내부 메서드 사용
         }
+        */
 
-        // 3. 주문  로직
+        // 4.  주문 로직 (DB 저장)
         Order order = orderService.createOrder(member, orderItems, totalAmount);
 
-        // 4. 결제 정보(대기) 미리 기록
-
-        // TODO: 예림님의 Payment 로직 연동 시 주석 해제
+        // TODO: 예림님(결제) + 윤지님(장바구니 비우기) 연동 시 주석 해제
 
         /*
+        // 5. 결제 정보(대기) 기록
         paymentService.createPayment(order, totalAmount);
+
+        // 6. 주문이 완료된 장바구니 아이템만 삭제
+        List<Long> orderedItemIds = cartItems.stream().map(CartItem::getId).toList();
+        cartService.clearCartItems(orderedItemIds, memberId);
         */
 
         return new OrderCreateResponse(order);
@@ -84,28 +98,19 @@ public class OrderFacade {
             throw new CustomException(ErrorCode.INVALID_REQUEST);
         }
 
-        // 1. 주문 취소 (상태 변경) 로직
         Order order = orderService.cancelOrder(memberId, orderId);
 
-        // 2. 타 기능(재고 복구, 결제 실패 처리) 트랜잭션
-
         // TODO: 준호님 재고 복구, 예림님 결제 상태 업데이트 연동 후 주석 해제 하고 사용
-
-        // 준호님 상품 (재고 복구 로직)
-
         /*
         for (OrderItem orderItem : order.getOrderItems()) {
-            // product.addStock(orderItem.getQuantity()); // 기존의 로직을 productService.restoreStock() 형태로 변경
             productService.restoreStock(orderItem.getProductId(), orderItem.getQuantity());
         }
         */
-
-        // 예림님 결제 (결제 실패 처리 로직)
 
         /*
         paymentService.failPaymentAndOrder(orderId); // 또는 결제 상태 FAILED 변경
         */
 
-        return new OrderCancelResponse(order, "FAILED"); // Payment 연동 후 실제 상태 반영
+        return new OrderCancelResponse(order, "FAILED");
     }
 }
