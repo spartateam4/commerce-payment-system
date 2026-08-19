@@ -24,13 +24,9 @@ public enum ErrorCode {
 
 
 
-    // ===== 상품 ===== (상품 담당자가 추가)
-
-
-
-
-
-
+    // ===== 상품 =====
+// 404 — 상품 없음
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
 
 
     // ===== 주문 ===== (주문 담당자가 추가)
