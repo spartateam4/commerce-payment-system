@@ -1,7 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.product.service;
 
+import com.sparta.team4.commerce_payment_system.domain.product.dto.ProductDetailResponse;
 import com.sparta.team4.commerce_payment_system.domain.product.dto.ProductListResponse;
-import com.sparta.team4.commerce_payment_system.domain.product.dto.ProductResponse;
 import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import com.sparta.team4.commerce_payment_system.domain.product.repository.ProductRepository;
 import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
@@ -12,14 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProductService {
 
-    private static final int MAX_PAGE_SIZE = 100;   // 팀 룰: 페이지 최대 크기
+    private static final int MAX_PAGE_SIZE = 100;   // 페이지 최대 조회 크기
 
     private final ProductRepository productRepository;
 
@@ -46,18 +44,12 @@ public class ProductService {
         Page<Product> products =
                 productRepository.searchProducts(category, minPrice, maxPrice, pageable);
 
-        List<ProductResponse> content = products.getContent().stream()
-                .map(ProductResponse::new)
-                .toList();
-
-        return new ProductListResponse(
-                content, page, size,
-                products.getTotalElements(), products.getTotalPages());
+        return new ProductListResponse(products);
     }
 
-    public ProductResponse getProduct(Long productId) {
+    public ProductDetailResponse getProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-        return new ProductResponse(product);
+        return new ProductDetailResponse(product);
     }
 }
