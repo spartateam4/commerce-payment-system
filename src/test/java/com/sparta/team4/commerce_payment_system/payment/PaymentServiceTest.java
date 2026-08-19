@@ -12,6 +12,8 @@ import com.sparta.team4.commerce_payment_system.domain.payment.entity.Payment;
 import com.sparta.team4.commerce_payment_system.domain.payment.entity.PaymentStatus;
 import com.sparta.team4.commerce_payment_system.domain.payment.repository.PaymentRepository;
 import com.sparta.team4.commerce_payment_system.domain.payment.service.PaymentService;
+import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
+import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -188,8 +191,18 @@ class PaymentServiceTest {
     @DisplayName("주문 소유자 불일치: ACCESS_DENIED")
     void access_denied_403() {
         // Given
-        // When
-        // Then
+        Order order = orders.get(0); // 주문 번호: 191
+
+        when(member.getId()).thenReturn(1L); // 실제 주문 소유자
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+        PaymentRequest request = new PaymentRequest(1L, "SUCCESS", 4000);
+
+        // When & Then
+        CustomException exception = assertThrows(CustomException.class,
+                () -> paymentService.confirm(2L, request)); // 다른 요청자
+
+        assertEquals(ErrorCode.ACCESS_DENIED, exception.getErrorCode());
     }
 
     @Test
