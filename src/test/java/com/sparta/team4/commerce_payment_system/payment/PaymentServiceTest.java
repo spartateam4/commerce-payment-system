@@ -4,6 +4,7 @@ import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderStatus;
 import com.sparta.team4.commerce_payment_system.domain.order.repository.OrderRepository;
+import com.sparta.team4.commerce_payment_system.domain.payment.dto.CancelPaymentResponse;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.CreatePaymentResponse;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.GetPaymentResponse;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.PaymentRequest;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -153,8 +155,29 @@ class PaymentServiceTest {
     @DisplayName("완료된 결제 취소 성공")
     void cancelled_pay() {
         // Given
+        Order order = orders.get(7); // 주문 번호: 198
+        ReflectionTestUtils.setField(order, "id", 8L);
+
+        Payment payment = new Payment(order, 8900);
+        ReflectionTestUtils.setField(payment, "id", 1L);
+        payment.complete(); // 억지로 PaymentStatus.COMPLETED 상태로 만들기
+
+        when(member.getId()).thenReturn(1L);
+        when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
+
         // When
+        CancelPaymentResponse response = paymentService.cancel(1L, 1L);
+
         // Then
+        assertAll(
+                () -> assertEquals(1L, response.paymentId()),
+                () -> assertEquals(8L, response.orderId()),
+                () -> assertEquals(8900, response.amount()),
+                () -> assertEquals(PaymentStatus.CANCELLED, response.pay_status()),
+                () -> assertEquals(OrderStatus.CANCELLED, response.order_status())
+        );
+
+        verify(paymentRepository).findById(1L);
     }
 
     /**
