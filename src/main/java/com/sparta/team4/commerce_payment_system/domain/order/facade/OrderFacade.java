@@ -1,5 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.order.facade;
 
+import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
+import com.sparta.team4.commerce_payment_system.domain.cart.service.CartService;
 import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
 import com.sparta.team4.commerce_payment_system.domain.member.repository.MemberRepository;
 import com.sparta.team4.commerce_payment_system.domain.order.dto.OrderCancelRequest;
@@ -9,6 +11,8 @@ import com.sparta.team4.commerce_payment_system.domain.order.dto.OrderCreateResp
 import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderItem;
 import com.sparta.team4.commerce_payment_system.domain.order.service.OrderService;
+import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
+import com.sparta.team4.commerce_payment_system.domain.product.service.ProductService;
 import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
 import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +32,8 @@ public class OrderFacade {
 
     // TODO: 윤지님(장바구니), 준호님(상품), 예림님(결제) 기능 서비스 추가 (주석 지우고 사용)
 
-    // private final CartService cartService;
-    // private final ProductService productService;
+    private final CartService cartService;
+    private final ProductService productService;
     // private final PaymentService paymentService;
 
     @Transactional
@@ -43,7 +47,6 @@ public class OrderFacade {
 
         // TODO: 윤지님(장바구니) + 준호님(상품) 연동 시 주석 해제 및 수정
 
-        /*
         // 2. 장바구니 아이템 조회 (요청이 비어있으면 전체 장바구니 조회)
         List<Long> cartItemIds = (request.getCartItemIds() != null) ? request.getCartItemIds() : List.of();
         List<CartItem> cartItems = cartItemIds.isEmpty()
@@ -58,13 +61,13 @@ public class OrderFacade {
         for (CartItem cartItem : cartItems) {
             Product product = cartItem.getProduct();
 
-            if (product.getStock() < cartItem.getQuantity()) {
+            if (product.getStockQuantity() < cartItem.getQuantity()) {
                 throw new CustomException(ErrorCode.OUT_OF_STOCK);
             }
             product.removeStock(cartItem.getQuantity());
 
             OrderItem orderItem = OrderItem.builder()
-                    // .product(product)
+                    .product(product)
                     .productName(product.getName())
                     .orderPrice(product.getPrice()) // 현재가(price)를 스냅샷으로 저장
                     .quantity(cartItem.getQuantity())
@@ -73,7 +76,7 @@ public class OrderFacade {
             orderItems.add(orderItem);
             totalAmount += orderItem.getSubtotal(); // 내부 메서드 사용
         }
-        */
+
 
         // 4.  주문 로직 (DB 저장)
         Order order = orderService.createOrder(member, orderItems, totalAmount);
@@ -83,12 +86,11 @@ public class OrderFacade {
         /*
         // 5. 결제 정보(대기) 기록
         paymentService.createPayment(order, totalAmount);
+        */
 
         // 6. 주문이 완료된 장바구니 아이템만 삭제
         List<Long> orderedItemIds = cartItems.stream().map(CartItem::getId).toList();
         cartService.clearCartItems(orderedItemIds, memberId);
-        */
-
         return new OrderCreateResponse(order);
     }
 
@@ -101,16 +103,13 @@ public class OrderFacade {
         Order order = orderService.cancelOrder(memberId, orderId);
 
         // TODO: 준호님 재고 복구, 예림님 결제 상태 업데이트 연동 후 주석 해제 하고 사용
-        /*
+
         for (OrderItem orderItem : order.getOrderItems()) {
             productService.restoreStock(orderItem.getProductId(), orderItem.getQuantity());
         }
-        */
-
         /*
         paymentService.failPaymentAndOrder(orderId); // 또는 결제 상태 FAILED 변경
         */
-
         return new OrderCancelResponse(order, "FAILED");
     }
 }

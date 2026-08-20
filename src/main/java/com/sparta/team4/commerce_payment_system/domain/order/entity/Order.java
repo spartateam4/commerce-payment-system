@@ -75,7 +75,7 @@ public class Order extends BaseEntity {
     // 상태 전이 규칙
     private void changeStatus(OrderStatus newStatus) {
         if (!this.status.canTransitTo(newStatus)) {
-            // 추후 ErrorCode에 INVALID_ORDER_STATUS 추가
+
             throw new CustomException(ErrorCode.INVALID_REQUEST);
         }
         this.status = newStatus;

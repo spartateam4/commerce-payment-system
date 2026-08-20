@@ -155,4 +155,22 @@ public class CartService {
                 total
         );
     }
+    // Facade에서 전체 장바구니 엔티티를 가져올 때 사용
+    public List<CartItem> findCartEntities(Long memberId) {
+        return cartItemRepository.findByCartMemberId(memberId);
+    }
+    // Facade에서 선택된 장바구니 엔티티만 가져올 때 사용
+    public List<CartItem> findCartEntitiesByIds(Long memberId, List<Long> cartItemIds) {
+        return cartItemRepository.findByCartMemberId(memberId).stream()
+                .filter(item -> cartItemIds.contains(item.getId()))
+                .toList();
+    }
+    // Facade에서 주문이 끝난 장바구니 아이템들을 비울 때 사용
+    @Transactional
+    public void clearCartItems(List<Long> cartItemIds, Long memberId) {
+        List<CartItem> items = cartItemRepository.findByCartMemberId(memberId).stream()
+                .filter(item -> cartItemIds.contains(item.getId()))
+                .toList();
+        cartItemRepository.deleteAll(items);
+    }
 }
