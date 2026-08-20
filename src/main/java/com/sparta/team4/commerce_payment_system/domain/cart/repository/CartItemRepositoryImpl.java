@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sparta.team4.commerce_payment_system.domain.cart.QCartItem.cartItem; // QClass import 필요
+import static com.sparta.team4.commerce_payment_system.domain.cart.entity.QCartItem.cartItem; // QClass import 필요
 
 @Repository
 @RequiredArgsConstructor

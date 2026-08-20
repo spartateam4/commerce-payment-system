@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.sparta.team4.commerce_payment_system.domain.cart.QCart.cart;
+import static com.sparta.team4.commerce_payment_system.domain.cart.entity.QCart.cart;
 
 @Repository
 @RequiredArgsConstructor
