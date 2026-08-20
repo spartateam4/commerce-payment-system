@@ -39,7 +39,6 @@ public class Payment extends BaseEntity {
     @Column(nullable = false, length = 20)
     private PaymentStatus status;
 
-    @LastModifiedDate
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 

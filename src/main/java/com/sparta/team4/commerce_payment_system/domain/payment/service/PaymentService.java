@@ -69,9 +69,13 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public GetPaymentResponse get(Long paymentId) {
+    public GetPaymentResponse get(Long requestedByMemberId, Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND)); // 404
+
+        // 소유자 확인 (남의 결제 조회 차단)
+        if (!requestedByMemberId.equals(payment.getOrder().getMember().getId()))
+            throw new CustomException(ErrorCode.ACCESS_DENIED); // 403
 
         return GetPaymentResponse.from(payment);
     }

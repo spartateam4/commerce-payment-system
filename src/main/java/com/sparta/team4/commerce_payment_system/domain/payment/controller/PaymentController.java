@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/api/payments/")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
-class PaymentController {
+public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/confirm")
@@ -32,8 +32,10 @@ class PaymentController {
     }
 
     @GetMapping("/{paymentId}")
-    public ResponseEntity<GetPaymentResponse> getPayment(@PathVariable Long paymentId) {
-        return ResponseEntity.ok(paymentService.get(paymentId));
+    public ResponseEntity<GetPaymentResponse> getPayment(
+            @AuthenticationPrincipal CustomUserPrincipal principal,
+            @PathVariable Long paymentId) {
+        return ResponseEntity.ok(paymentService.get(principal.getMemberId(), paymentId));
     }
 
     @PatchMapping("/{paymentId}/cancel")

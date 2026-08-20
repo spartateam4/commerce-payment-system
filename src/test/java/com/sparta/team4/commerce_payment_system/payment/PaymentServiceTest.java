@@ -94,9 +94,9 @@ class PaymentServiceTest {
         // Then
         assertAll(
                 () -> assertEquals(23300, response.amount()),
-                () -> assertEquals(PaymentStatus.COMPLETED, response.pay_status()),
-                () -> assertEquals(OrderStatus.COMPLETED, response.order_status()),
-                () -> assertNotNull(response.paid_at())
+                () -> assertEquals(PaymentStatus.COMPLETED, response.paymentStatus()),
+                () -> assertEquals(OrderStatus.COMPLETED, response.orderStatus()),
+                () -> assertNotNull(response.paidAt())
         );
 
         verify(paymentRepository).save(any(Payment.class));
@@ -123,9 +123,9 @@ class PaymentServiceTest {
         // Then
         assertAll(
                 () -> assertEquals(12000, response.amount()),
-                () -> assertEquals(PaymentStatus.FAILED, response.pay_status()),
-                () -> assertEquals(OrderStatus.CANCELLED, response.order_status()),
-                () -> assertNull(response.paid_at())
+                () -> assertEquals(PaymentStatus.FAILED, response.paymentStatus()),
+                () -> assertEquals(OrderStatus.CANCELLED, response.orderStatus()),
+                () -> assertNull(response.paidAt())
         );
 
         verify(paymentRepository).save(any(Payment.class));
@@ -139,10 +139,11 @@ class PaymentServiceTest {
         payment.complete(); // 억지로 결제시각 갱신
         LocalDateTime paidAt = payment.getPaidAt();
 
+        when(member.getId()).thenReturn(1L);
         when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
 
         // When
-        GetPaymentResponse response = paymentService.get(1L);
+        GetPaymentResponse response = paymentService.get(1L, 1L);
 
         // Then
         assertAll(
@@ -176,8 +177,8 @@ class PaymentServiceTest {
                 () -> assertEquals(1L, response.paymentId()),
                 () -> assertEquals(8L, response.orderId()),
                 () -> assertEquals(8900, response.amount()),
-                () -> assertEquals(PaymentStatus.CANCELLED, response.pay_status()),
-                () -> assertEquals(OrderStatus.CANCELLED, response.order_status())
+                () -> assertEquals(PaymentStatus.CANCELLED, response.paymentStatus()),
+                () -> assertEquals(OrderStatus.CANCELLED, response.orderStatus())
         );
 
         verify(paymentRepository).findById(1L);
