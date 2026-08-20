@@ -1,7 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.cart.service;
 
-import com.sparta.team4.commerce_payment_system.domain.cart.Cart;
-import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.Cart;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.CartItem;
 import com.sparta.team4.commerce_payment_system.domain.cart.dto.CartItemResponse;
 import com.sparta.team4.commerce_payment_system.domain.cart.dto.CartResponse;
 import com.sparta.team4.commerce_payment_system.domain.cart.repository.CartItemRepository;

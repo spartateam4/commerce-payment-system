@@ -1,6 +1,6 @@
 package com.sparta.team4.commerce_payment_system.domain.order.facade;
 
-import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.CartItem;
 import com.sparta.team4.commerce_payment_system.domain.cart.service.CartService;
 import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
 import com.sparta.team4.commerce_payment_system.domain.member.repository.MemberRepository;
