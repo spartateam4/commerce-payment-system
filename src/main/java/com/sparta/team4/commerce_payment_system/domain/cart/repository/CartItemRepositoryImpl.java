@@ -1,8 +1,8 @@
 package com.sparta.team4.commerce_payment_system.domain.cart.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.team4.commerce_payment_system.domain.cart.Cart;
-import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.Cart;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.CartItem;
 import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.sparta.team4.commerce_payment_system.domain.cart.QCartItem.cartItem; // QClass import 필요
+import static com.sparta.team4.commerce_payment_system.domain.cart.entity.QCartItem.cartItem; // QClass import 필요
 
 @Repository
 @RequiredArgsConstructor

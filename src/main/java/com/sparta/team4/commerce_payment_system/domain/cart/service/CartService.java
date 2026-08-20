@@ -1,7 +1,7 @@
 package com.sparta.team4.commerce_payment_system.domain.cart.service;
 
-import com.sparta.team4.commerce_payment_system.domain.cart.Cart;
-import com.sparta.team4.commerce_payment_system.domain.cart.CartItem;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.Cart;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.CartItem;
 import com.sparta.team4.commerce_payment_system.domain.cart.dto.CartItemResponse;
 import com.sparta.team4.commerce_payment_system.domain.cart.dto.CartResponse;
 import com.sparta.team4.commerce_payment_system.domain.cart.repository.CartItemRepository;
@@ -155,4 +155,15 @@ public class CartService {
                 total
         );
     }
+    // Facade에서 전체 장바구니 엔티티를 가져올 때 사용
+    public List<CartItem> findCartEntities(Long memberId) {
+        return cartItemRepository.findByCartMemberId(memberId);
+    }
+    // Facade에서 선택된 장바구니 엔티티만 가져올 때 사용
+    public List<CartItem> findCartEntitiesByIds(Long memberId, List<Long> cartItemIds) {
+        return cartItemRepository.findByCartMemberId(memberId).stream()
+                .filter(item -> cartItemIds.contains(item.getId()))
+                .toList();
+    }
+
 }

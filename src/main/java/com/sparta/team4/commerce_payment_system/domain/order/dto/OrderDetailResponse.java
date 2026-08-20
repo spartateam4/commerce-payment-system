@@ -38,8 +38,7 @@ public class OrderDetailResponse {
 
         public OrderItemResponse(OrderItem item) {
             this.id = item.getId();
-            // product 연동 후 주석 삭제
-            // this.productId = item.getProduct().getId();
+            this.productId = item.getProduct().getId();
             this.productName = item.getProductName();
             this.orderPrice = item.getOrderPrice();
             this.quantity = item.getQuantity();

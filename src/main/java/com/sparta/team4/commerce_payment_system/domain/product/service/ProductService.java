@@ -52,4 +52,16 @@ public class ProductService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
         return new ProductDetailResponse(product);
     }
+    // Facade에서 재고 복구를 위해 호출할 메서드
+    @Transactional
+    public void restoreStock(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.addStock(quantity);
+    }
+    // Facade에서 상품 엔티티를 직접 꺼내기 위해 호출할 메서드
+    public Product findProductEntity(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+    }
 }

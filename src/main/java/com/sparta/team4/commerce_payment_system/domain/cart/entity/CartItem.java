@@ -1,4 +1,4 @@
-package com.sparta.team4.commerce_payment_system.domain.cart;
+package com.sparta.team4.commerce_payment_system.domain.cart.entity;
 
 import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;

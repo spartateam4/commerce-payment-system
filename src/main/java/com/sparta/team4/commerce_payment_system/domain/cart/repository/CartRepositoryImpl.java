@@ -1,13 +1,13 @@
 package com.sparta.team4.commerce_payment_system.domain.cart.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.team4.commerce_payment_system.domain.cart.Cart;
+import com.sparta.team4.commerce_payment_system.domain.cart.entity.Cart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.sparta.team4.commerce_payment_system.domain.cart.QCart.cart;
+import static com.sparta.team4.commerce_payment_system.domain.cart.entity.QCart.cart;
 
 @Repository
 @RequiredArgsConstructor
