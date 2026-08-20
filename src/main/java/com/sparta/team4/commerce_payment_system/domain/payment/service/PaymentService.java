@@ -1,6 +1,8 @@
 package com.sparta.team4.commerce_payment_system.domain.payment.service;
 
+import com.sparta.team4.commerce_payment_system.domain.cart.service.CartService;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
+import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderItem;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderStatus;
 import com.sparta.team4.commerce_payment_system.domain.order.repository.OrderRepository;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.CancelPaymentResponse;
@@ -10,6 +12,7 @@ import com.sparta.team4.commerce_payment_system.domain.payment.dto.PaymentReques
 import com.sparta.team4.commerce_payment_system.domain.payment.entity.Payment;
 import com.sparta.team4.commerce_payment_system.domain.payment.entity.PaymentStatus;
 import com.sparta.team4.commerce_payment_system.domain.payment.repository.PaymentRepository;
+import com.sparta.team4.commerce_payment_system.domain.product.service.ProductService;
 import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
 import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final ProductService productService;
+    private final CartService cartService;
 
     @Transactional
     public CreatePaymentResponse confirm(Long requestedByMemberId, PaymentRequest request) {
@@ -52,12 +57,12 @@ public class PaymentService {
             case "SUCCESS" -> {
                 payment.complete(); // 결제: PENDING -> COMPLETED
                 payment.getOrder().completeOrder(); // 주문: PAYMENT_PENDING -> COMPLETED
-                // TODO 장바구니 비우기 - cart.clear()
+                cartService.deleteAllCartItems(requestedByMemberId); // 장바구니 비우기
             }
             case "FAIL" -> {
                 payment.fail(); // 결제: PENDING -> FAILED
                 payment.getOrder().cancelOrder(); // 주문: PAYMENT_PENDING -> CANCELLED
-                // TODO 재고 복구 - product.stock() + order.stock()
+                restoreStockAtPayment(targetOrder); // 재고 복구
             }
             default -> throw new CustomException(ErrorCode.INVALID_PAYMENT_RESULT); // 400
         }
@@ -100,8 +105,13 @@ public class PaymentService {
 
         targetPayment.cancel(); // 결제: COMPLETED -> CANCELLED
         targetPayment.getOrder().cancelOrder(); // 주문: COMPLETED -> CANCELLED
-        // TODO 재고 복구 - product.stock() + order.stock()
+        restoreStockAtPayment(targetPayment.getOrder()); // 재고 복구
 
         return CancelPaymentResponse.from(targetPayment);
+    }
+
+    private void restoreStockAtPayment(Order order) {
+        for (OrderItem orderItem : order.getOrderItems())
+            productService.restoreStock(orderItem.getProductId(), orderItem.getQuantity());
     }
 }
