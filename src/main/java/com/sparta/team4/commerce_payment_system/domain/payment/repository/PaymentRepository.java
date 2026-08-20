@@ -5,14 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    @Query("SELECT p.id FROM Payment p WHERE p.order.id = :orderId")
-    Optional<Long> findPaymentIdByOrderId(@Param("orderId") Long orderId);
-
-    @Query("SELECT p.id, p.order.id FROM Payment p WHERE p.order.id IN :orderIds")
-    List<Object[]> findIdsByOrderIds(@Param("orderIds") List<Long> orderIds);
+    @Query("SELECT p FROM Payment p JOIN FETCH p.order o JOIN FETCH o.member WHERE p.id = :paymentId")
+    Optional<Payment> findByIdWithOrderAndMember(@Param("paymentId") Long paymentId);
 }
