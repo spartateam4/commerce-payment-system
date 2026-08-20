@@ -51,10 +51,11 @@ public enum ErrorCode {
 
     // ===== 결제 ===== (결제 담당자가 추가)
 
-
-
-
-
+    PRICE_MISMATCH(HttpStatus.BAD_REQUEST, "요청 금액과 결제 금액이 일치하지 않습니다."),
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 정보를 찾을 수 없습니다."),
+    INVALID_ORDER_STATUS(HttpStatus.CONFLICT, "결제 가능한 주문 상태가 아닙니다."),
+    INVALID_PAYMENT_STATUS(HttpStatus.CONFLICT, "결제 가능한 결제 상태가 아닙니다."),
+    INVALID_PAYMENT_RESULT(HttpStatus.BAD_REQUEST, "지원하지 않는 결제 결과입니다.");
 
 
 
