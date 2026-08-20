@@ -227,6 +227,8 @@ class PaymentServiceTest {
     @DisplayName("결제 금액 불일치: PRICE_MISMATCH")
     void price_mismatch_400() {
         // Given
+        Order order = orders.get(1); // 주문 번호: 191
+        when(member.getId()).thenReturn(1L);
 
         PaymentRequest request = new PaymentRequest(2L, "SUCCESS", 5000);
 
