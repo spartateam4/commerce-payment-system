@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -162,7 +163,7 @@ class PaymentServiceTest {
         Order order = orders.get(7); // 주문 번호: 198
         ReflectionTestUtils.setField(order, "id", 8L);
 
-        Payment payment = new Payment(order, 8900);
+        Payment payment = new Payment(order, order.getTotalAmount());
         ReflectionTestUtils.setField(payment, "id", 1L);
         payment.complete(); // 억지로 PaymentStatus.COMPLETED 상태로 만들기
 
@@ -193,25 +194,47 @@ class PaymentServiceTest {
     void access_denied_403() {
         // Given
         Order order = orders.get(0); // 주문 번호: 191
+        Payment payment = new Payment(order, order.getTotalAmount());
+        ReflectionTestUtils.setField(payment, "id", 1L);
 
         when(member.getId()).thenReturn(1L); // 실제 주문 소유자
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
 
         PaymentRequest request = new PaymentRequest(1L, "SUCCESS", 4000);
 
         // When & Then
-        CustomException exception = assertThrows(CustomException.class,
+        // 1. 모의 결제
+        CustomException exception1 = assertThrows(CustomException.class,
                 () -> paymentService.confirm(2L, request)); // 다른 요청자
 
-        assertEquals(ErrorCode.ACCESS_DENIED, exception.getErrorCode());
+        assertEquals(ErrorCode.ACCESS_DENIED, exception1.getErrorCode());
+
+        // 2. 결제 단 건 조회
+        CustomException exception2 = assertThrows(CustomException.class,
+                () -> paymentService.get(23L, 1L)); // 다른 요청자
+
+        assertEquals(ErrorCode.ACCESS_DENIED, exception2.getErrorCode());
+
+        // 3. 결제 후 취소
+        CustomException exception3 = assertThrows(CustomException.class,
+                () -> paymentService.cancel(16L, 1L)); // 다른 요청자
+
+        assertEquals(ErrorCode.ACCESS_DENIED, exception3.getErrorCode());
     }
 
     @Test
     @DisplayName("결제 금액 불일치: PRICE_MISMATCH")
     void price_mismatch_400() {
         // Given
-        // When
-        // Then
+
+        PaymentRequest request = new PaymentRequest(2L, "SUCCESS", 5000);
+
+        // When & Then
+        CustomException exception = assertThrows(CustomException.class,
+                () -> paymentService.confirm(5L, request));
+
+        //assertThat();
     }
 
     @Test
