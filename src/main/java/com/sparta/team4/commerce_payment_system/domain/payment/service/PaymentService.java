@@ -4,7 +4,6 @@ import com.sparta.team4.commerce_payment_system.domain.cart.service.CartService;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderItem;
 import com.sparta.team4.commerce_payment_system.domain.order.entity.OrderStatus;
-import com.sparta.team4.commerce_payment_system.domain.order.repository.OrderRepository;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.CancelPaymentResponse;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.CreatePaymentResponse;
 import com.sparta.team4.commerce_payment_system.domain.payment.dto.GetPaymentResponse;
@@ -23,14 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final OrderRepository orderRepository;
     private final ProductService productService;
     private final CartService cartService;
 
     @Transactional
     public CreatePaymentResponse confirm(Long requestedByMemberId, PaymentRequest request) {
         // 요청 ID에 해당하는 주문데이터(행) 찾기
-        Order targetOrder = orderRepository.findById(request.orderId())
+        Order targetOrder = paymentRepository.findOrderByIdWithPaymentDetails(request.orderId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND)); // 404
 
         // 주문 소유자 확인
