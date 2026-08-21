@@ -2,6 +2,8 @@ package com.sparta.team4.commerce_payment_system.domain.payment.entity;
 
 import com.sparta.team4.commerce_payment_system.domain.order.entity.Order;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
+import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
+import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,7 +18,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -49,15 +50,22 @@ public class Payment extends BaseEntity {
     }
 
     public void complete() {
-        this.status = PaymentStatus.COMPLETED;
+        changeStatus(PaymentStatus.COMPLETED);
         this.paidAt = LocalDateTime.now();
     }
 
     public void fail() {
-        this.status = PaymentStatus.FAILED;
+        changeStatus(PaymentStatus.FAILED);
     }
 
     public void cancel() {
-        this.status = PaymentStatus.CANCELLED;
+        changeStatus(PaymentStatus.CANCELLED);
+    }
+
+    private void changeStatus(PaymentStatus newStatus) {
+        if (!this.status.canTransitTo(newStatus))
+            throw new CustomException(ErrorCode.INVALID_PAYMENT_STATUS);
+
+        this.status = newStatus;
     }
 }
