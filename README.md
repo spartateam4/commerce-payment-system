@@ -55,35 +55,15 @@ Spring Boot 기반의 커머스 결제 백엔드 시스템입니다.
 
 ## 2. 기술 스택
 
-### Backend
-
-- Java 17
-- Spring Boot 4.1.0
-- Spring MVC
-- Spring Data JPA
-- Spring Security
-- JWT (JJWT 0.13.0)
-- QueryDSL 5.1.0
-- Bean Validation
-- Lombok
-- Gradle
-
-### Database
-
-- MySQL
-
-### Development / Test
-
-- IntelliJ IDEA
-- Postman
-- DBeaver
-
-### Collaboration
-
-- Git
-- GitHub
-- GitHub Pull Request
-
+| 구분 | 기술 |
+| --- | --- |
+| Backend | Java 17, Spring Boot 4.1.0, Spring MVC, Spring Data JPA, Spring Security |
+| Authentication | JWT (JJWT 0.13.0) |
+| Query / Validation | QueryDSL 5.1.0, Bean Validation |
+| Build / Utility | Gradle, Lombok |
+| Database | MySQL |
+| Development / Test | IntelliJ IDEA, Postman, DBeaver |
+| Collaboration | Git, GitHub, GitHub Pull Request |
 ---
 
 ## 3. 핵심 흐름
@@ -468,8 +448,8 @@ src/main/java/com/sparta/team4/commerce_payment_system
 ---
 ## 10. 협업 방식
 
-- `main` → `develop` → `feat/{domain}` 브랜치 전략으로 기능을 분리하여 개발했습니다.
-- 기능 구현 후 Pull Request를 통해 `develop` 브랜치에 통합했습니다.
+- `feat/{domain}` → Pull Request → `develop` → 최종 검증 → `main` 흐름으로 기능을 통합했습니다.
+- 각 기능은 담당 도메인별 Feature 브랜치에서 개발한 뒤 Pull Request를 통해 코드 리뷰 및 병합했습니다.
 - 커밋 메시지는 `feat`, `fix`, `refactor`, `docs`, `chore` 등의 type을 구분하여 작성했습니다.
 - API에서는 Entity를 직접 반환하지 않고 DTO를 사용했으며, 공통 예외 응답 형식을 적용했습니다.
 - 인증이 필요한 기능은 JWT에서 확인한 현재 로그인 사용자를 기준으로 처리했습니다.
@@ -510,6 +490,8 @@ CREATE DATABASE commerce;
 | `DB_USERNAME` | X | `root` | DB 사용자명 |
 | `JWT_SECRET` | X | 개발용 기본값 | JWT 서명 키 |
 | `JWT_EXPIRATION_MS` | X | `3600000` | Access Token 만료 시간(ms) |
+
+> `JWT_SECRET` 기본값은 로컬 개발용입니다. 운영 환경에서는 충분히 긴 별도 키를 환경변수로 설정해야 합니다.
 
 > IntelliJ에서는 Run/Debug Configurations → Environment variables에 `DB_PASSWORD=...`를 등록합니다.
 
