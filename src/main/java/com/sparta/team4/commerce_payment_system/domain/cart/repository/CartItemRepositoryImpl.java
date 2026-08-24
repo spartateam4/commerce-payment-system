@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.sparta.team4.commerce_payment_system.domain.cart.entity.QCartItem.cartItem; // QClass import 필요
+import static com.sparta.team4.commerce_payment_system.domain.product.entity.QProduct.product;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,6 +47,7 @@ public class CartItemRepositoryImpl implements CartItemRepositoryCustom {
     public List<CartItem> findByCartMemberId(Long memberId) {
         return queryFactory
                 .selectFrom(cartItem)
+                .leftJoin(cartItem.product, product).fetchJoin()
                 .where(cartItem.cart.member.id.eq(memberId))
                 .fetch();
     }
