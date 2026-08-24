@@ -428,6 +428,12 @@ src/main/java/com/sparta/team4/commerce_payment_system
 
 주요 API와 비즈니스 로직은 Postman을 통해 정상·예외 시나리오를 검증했습니다.
 
+### Postman
+
+- [Postman Collection](https://www.postman.com/jes2ngyun-5965557/workspace/commerce-payment-system/collection/55309519-f1f7a25c-7cce-4703-ad1d-3545b96ef56b?action=share&creator=55309519)
+- [Postman Environment](https://www.postman.com/jes2ngyun-5965557/workspace/commerce-payment-system/environment/55309519-a6dd7eb5-d014-45bf-824d-0393d8be549b?action=share&creator=55309519&active-environment=55309519-a6dd7eb5-d014-45bf-824d-0393d8be549b)
+
+
 | 영역 | 주요 검증 항목 | 결과 |
 | --- | --- | --- |
 | 인증·회원 | 회원가입, 중복 이메일, 로그인, 잘못된 로그인, 미인증 접근 | ✅ 완료 |
