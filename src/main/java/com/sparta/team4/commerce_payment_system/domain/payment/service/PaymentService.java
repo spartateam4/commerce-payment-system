@@ -25,6 +25,7 @@ public class PaymentService {
     private final ProductService productService;
     private final CartService cartService;
 
+    /** 모의 결제 */
     @Transactional
     public CreatePaymentResponse confirm(Long requestedByMemberId, PaymentRequest request) {
         // 요청 ID에 해당하는 주문데이터(행) 찾기
@@ -62,23 +63,31 @@ public class PaymentService {
         }
 
         // DB에 저장
-        Payment savePayment = paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        return CreatePaymentResponse.from(savePayment);
+        return CreatePaymentResponse.from(savedPayment);
     }
 
+    /** 결제 단 건 조회 */
     @Transactional(readOnly = true)
     public GetPaymentResponse get(Long requestedByMemberId, Long paymentId) {
+        // 요청 ID에 해당하는 결제데이터(행) 찾기
+        Payment payment = paymentRepository.findByIdWithOrderAndMember(paymentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND)); // 404
 
-        Payment payment = getPaymentAndValidateOwner(requestedByMemberId, paymentId);
+        validateOwner(requestedByMemberId, payment);
 
         return GetPaymentResponse.from(payment);
     }
 
+    /** 결제 후 취소 (환불) */
     @Transactional
     public CancelPaymentResponse cancel(Long requestedByMemberId, Long paymentId) {
+        // 요청 ID에 해당하는 결제데이터(행) 찾기
+        Payment targetPayment = paymentRepository.findByIdWithOrderMemberAndItems(paymentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND)); // 404
 
-        Payment targetPayment = getPaymentAndValidateOwner(requestedByMemberId, paymentId);
+        validateOwner(requestedByMemberId, targetPayment);
 
         // 결제 상태가 "완료"가 아님
         if (targetPayment.getStatus() != PaymentStatus.COMPLETED)
@@ -100,15 +109,9 @@ public class PaymentService {
             productService.restoreStock(orderItem.getProductId(), orderItem.getQuantity());
     }
 
-    private Payment getPaymentAndValidateOwner(Long requestedByMemberId, Long paymentId) {
-        // 요청 ID에 해당하는 결제데이터(행) 찾기
-        Payment payment = paymentRepository.findByIdWithOrderAndMember(paymentId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND)); // 404
-
-        // 주문 소유자 확인
+    // 결제 소유자 확인
+    private void validateOwner(Long requestedByMemberId, Payment payment) {
         if (!requestedByMemberId.equals(payment.getOrder().getMember().getId()))
             throw new CustomException(ErrorCode.ACCESS_DENIED); // 403
-
-        return payment;
     }
 }
