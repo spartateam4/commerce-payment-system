@@ -2,15 +2,20 @@ package com.sparta.team4.commerce_payment_system.domain.cart.entity;
 
 import com.sparta.team4.commerce_payment_system.domain.product.entity.Product;
 import com.sparta.team4.commerce_payment_system.global.common.entity.BaseEntity;
+import com.sparta.team4.commerce_payment_system.global.exception.CustomException;
+import com.sparta.team4.commerce_payment_system.global.exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "cartItems", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"cart_id", "product_id"})
-})
+@Table(
+        name = "cartItems",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"cart_id", "product_id"})
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CartItem extends BaseEntity {
@@ -31,11 +36,11 @@ public class CartItem extends BaseEntity {
     private int quantity;
 
     public CartItem(Cart cart, Product product, int quantity) {
+        if (quantity < 1) {
+            throw new CustomException(ErrorCode.INVALID_QUANTITY);
+        }
         this.cart = cart;
         this.product = product;
-        if (quantity < 1) {
-            throw new IllegalArgumentException("수량은 1 이상이어야 합니다.");
-        }
         this.quantity = quantity;
     }
 
@@ -43,22 +48,19 @@ public class CartItem extends BaseEntity {
         return product.getId();
     }
 
-
-    // 동일 상품 중복 담기 시 기존 cartItem의 수량 누적 증가
+    // 동일 상품 중복 담기 시 기존 CartItem의 수량 증가
     public void addQuantity(int quantity) {
         if (quantity < 1) {
-            throw new IllegalStateException("수량은 1 이상이어야 합니다.");
+            throw new CustomException(ErrorCode.INVALID_QUANTITY);
         }
         this.quantity += quantity;
     }
 
-
-    // 수량 변경 시 사용자가 보낸 수량 값이 유효한 지 확인 후, 장바구니 항목의 수량을 그 값으로 바꿈
+    // 장바구니 상품 수량 변경
     public void changeQuantity(int quantity) {
         if (quantity < 1) {
-            throw new IllegalArgumentException("수량은 1 이상이어야 합니다.");
+            throw new CustomException(ErrorCode.INVALID_QUANTITY);
         }
         this.quantity = quantity;
     }
-
 }
