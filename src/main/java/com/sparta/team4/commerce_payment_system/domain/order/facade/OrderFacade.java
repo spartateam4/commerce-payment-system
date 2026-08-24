@@ -1,5 +1,6 @@
 package com.sparta.team4.commerce_payment_system.domain.order.facade;
 
+import com.sparta.team4.commerce_payment_system.domain.payment.entity.PaymentStatus;
 import com.sparta.team4.commerce_payment_system.domain.cart.entity.CartItem;
 import com.sparta.team4.commerce_payment_system.domain.cart.service.CartService;
 import com.sparta.team4.commerce_payment_system.domain.member.entity.Member;
@@ -91,6 +92,6 @@ public class OrderFacade {
             productService.restoreStock(orderItem.getProductId(), orderItem.getQuantity());
         }
 
-        return new OrderCancelResponse(order, "FAILED");
+        return new OrderCancelResponse(order,PaymentStatus.CANCELLED);
     }
 }
